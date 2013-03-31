@@ -1,0 +1,46 @@
+
+xdiv::-webkit-scrollbar-track-piece{   
+    background-color:#F94;   
+    -webkit-border-radius:8px;   
+}   
+xdiv::-webkit-scrollbar{   
+    width:14px;   
+    height:14px;   
+    -webkit-border-radius:4px;   
+}
+xdiv::-webkit-scrollbar-thumb{   
+    height:14px;   
+    background-color:#E41;   
+    -webkit-border-radius:8px;   
+    outline:2px solid #F63;   
+    outline-offset:-2px;
+    border: 2px solid #F63;
+}   
+xdiv::-webkit-scrollbar-thumb:hover{   
+    height:14px;   
+    background-color:#D21;   
+    -webkit-border-radius:4px;   
+}  
+
+::-webkit-scrollbar {
+    width: 14px;
+}
+
+  /* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(231,231,231,0.8);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(231,231,231,0.4);
+}

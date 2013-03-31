@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns:ivy="antlib:org.apache.ivy.ant">
+
+<target name="pages" depends="init">
+<exec executable="svnversion" outputproperty="svnversion">
+<arg line="."/>
+</exec>
+</target>
+
+   <!-- ================================================================== -->
+    <!-- Make war file                                                      -->
+    <!-- ================================================================== -->
+    <!--                                                                    -->
+    <!-- ================================================================== -->
+    <target name="war" depends="jar, pages">
+        <war destfile="${build.dir}/${name}.war" webxml="${build.webapps}/WEB-INF/web.xml">
+        <fileset dir="${build.webapps}" >
+        <exclude name="**/web.xml" />
+        </fileset>
+            <lib dir="${lib.dir}">
+                <exclude name="*-src.zip" />
+                <exclude name="*-src.jar" />
+                <exclude name="*.src.zip" />
+                <exclude name="*.src.jar" />
+            </lib>
+            <lib dir="${build.dir}">
+                <include name="${final.name}.jar"/>
+            </lib>
+        </war>
+    </target>
+    <!-- ================================================================== -->
+    <!-- Deploy web                                                         -->
+    <!-- ================================================================== -->
+    <!--                                                                    -->
+    <!-- ================================================================== -->
+    <target name="deploy-web" depends="war">
+        <fail unless="resin.home.dir"
+            message="Cannot find property install.dir. Please set." />
+        <delete dir="${resin.home.dir}/webapps/ROOT" />
+        <unwar src="${build.dir}/${name}.war" dest="${resin.home.dir}/webapps/ROOT" overwrite="true" />
+    </target>
+
+    <target name="deploy-jar" depends="dir-jar">
+        <fail unless="resin.home.dir"
+            message="Cannot find property install.dir. Please set." />
+        <!-- Copy jar file only, and restart resin -->
+        <copy todir="${resin.home.dir}/webapps/ROOT/WEB-INF/lib"  overwrite="true" file="${build.dir}/${name}.jar" /> 
+        <exec executable="run/resin.sh"> 
+            <arg line="restart" /> 
+        </exec>
+    </target>
+
+    <target name="deploy-javadoc" depends="javadoc">
+        <zip destfile="${build.dir}/${name}-${version}-javadoc.zip">
+            <zipfileset dir="${javadoc.dir}" excludes="**/.svn" />
+        </zip>
+        <delete dir="${resin.home.dir}/webapps/docs" />
+    <unzip src="${build.dir}/${name}-${version}-javadoc.zip" dest="${resin.home.dir}/webapps/docs" overwrite="true"/>
+
+    </target>
+</project>

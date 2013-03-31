@@ -1,0 +1,34 @@
+<ivy-module version="1.0">
+    <info organisation="${organisation}" module="${module}"/>
+    
+    <configurations>
+        <conf name="api" description="application interface"/>
+        <conf name="dev" extends="api" visibility="private" description="test"/>
+    </configurations>
+    
+    <publications>
+        <artifact name="${final.name}" type="jar" conf="api"/>
+        <artifact name="${final.name}-src" type="zip" conf="api" />
+    </publications>
+    
+    <dependencies>
+        <!-- toolbox -->
+        <dependency org="toolbox-official" name="misc-tools" rev="3.0.+" conf="dev->core"/>
+        <dependency org="toolbox-official" name="collections" rev="2.0.+" conf="dev->core"/>
+        <dependency org="toolbox" name="flagfilter" rev="1.1.+"/> 
+        <dependency org="toolbox" name="web-tools" rev="2.0.+" conf="dev->core"/> 
+
+        <!-- external -->
+        <dependency org="external" name="junit" rev="4.10" conf="dev->default"/>
+        <dependency org="external" name="weka" rev="3.7.7" conf="dev->default"/>
+        <dependency org="external" name="spring" rev="2.0.6" conf="dev->default"/>
+        <dependency org="external" name="velocity" rev="dep-1.7" conf="dev->default"/>
+        <dependency org="external" name="servlet-api" rev="3.0" conf="dev->default"/>
+        <dependency org="external" name="urlrewrite" rev="3.2.+" conf="dev->core" />
+        <dependency org="external" name="commons-fileupload" rev="1.2.+" conf="dev->default" />
+        <dependency org="external" name="commons-io" rev="2.0" conf="dev->default"/>
+        <dependency org="external" name="jedis2" rev="2.0.0" conf="dev->default"/>
+        <dependency org="external" name="json" rev="1.0" conf="dev->default"/>
+    </dependencies>
+    
+</ivy-module>

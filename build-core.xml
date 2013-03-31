@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    
+<project xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property file="${user.home}/build.properties" />
+    <property file="${user.home}/user.properties" />
+    <property file="${user.home}/ivy.properties" />
+    <property file="${basedir}/default.properties"/>
+    <property file="${basedir}/user.properties"/>
+    <property file="${basedir}/build.properties"/>
+
+    <path id="project.classpath">
+        <pathelement location="${build.classes}"/>
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${conf.dir}"/>
+    </path>
+    <path id="test.classpath">
+        <pathelement location="${test.build.classes}"/>
+        <path refid="project.classpath"/>
+    </path>
+
+
+    <!-- Initialization -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+        <touch datetime="01/25/1971 2:00 pm">
+            <fileset dir="${conf.dir}" includes="**/*.template"/>
+        </touch>
+        
+        <copy todir="${conf.dir}" verbose="true">
+            <fileset dir="${conf.dir}" includes="**/*.template"/>
+            <mapper type="glob" from="*.template" to="*"/>
+        </copy>
+    </target>
+    
+    <!-- Build the project. -->
+    <target name="build" depends="init, resolve">
+        <mkdir dir="${build.classes}"/>
+        <javac
+            encoding="${build.encoding}"
+            srcdir="${src.dir}"
+            includes="**/*.java"
+            destdir="${build.classes}"
+            debug="${debug}"
+            optimize="${optimize}"
+            deprecation="${deprecation}">
+            <classpath refid="project.classpath"/>
+        </javac>
+        <copy todir="${build.classes}">
+            <fileset dir="${src.dir}">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.bak" />
+                <exclude name="**/~*" />
+                <exclude name="**/.svn/**" />
+            </fileset>
+        </copy>
+    </target>
+    <!-- Build the project with experimental code. -->
+    <target name="build-exp" depends="init, resolve">
+        <mkdir dir="${build.classes}"/>
+        <javac
+          encoding="${build.encoding}"
+          srcdir="${src.dir}"
+          includes="**/*.java"
+          destdir="${build.classes}"
+          debug="${debug}"
+          optimize="${optimize}"
+          deprecation="${deprecation}">
+            <classpath refid="project.classpath"/>
+        </javac>
+        <copy todir="${build.classes}">
+             <fileset dir="${exp.dir}">
+                 <exclude name="**/*.java" />
+                 <exclude name="**/*.bak" />
+                 <exclude name="**/~*" />
+                 <exclude name="**/.svn/**" />
+             </fileset>
+        </copy>
+    </target>
+
+    <!-- Build test cases. -->
+    <target name="build-test" depends="init, resolve">
+        <mkdir dir="${test.build.classes}" />
+        <javac destdir="${test.build.classes}" encoding="${build.encoding}">
+            <src path="${test.src.dir}"/>
+            <classpath refid="project.classpath"/>
+        </javac>
+        <copy todir="${test.build.classes}">
+            <fileset dir="${test.src.dir}">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.bak" />
+                <exclude name="**/~*" />
+                <exclude name="**/.svn/**" />
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Clean built files. -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete file="${final.name}.jar"/>
+        <delete includeemptydirs="true">
+            <fileset dir="${lib.dir}" includes="**/*" excludes="**/.svn/*" />
+        </delete>
+    </target>
+    
+    <!-- web related -->
+    <target name="web" depends="jar">
+        <mkdir dir="${log.dir}"/>
+        <mkdir dir="${web.lib}"/>
+        <copy todir="${web.lib}">
+             <fileset dir="${lib.dir}" includes="*"/>
+        </copy>
+
+        <mkdir dir="${web.classes}"/>
+        <copy todir="${web.classes}">
+             <fileset dir="${conf.dir}" includes="*.xml"/>
+        </copy>
+
+        <copy file="${build.dir}/${final.name}.jar" tofile="${web.lib}/${name}.${version}.jar"/>
+    </target>
+
+    <!-- Make jar file -->
+    <target name="jar" depends="build">
+        <mkdir dir="${build.classes}/META-INF"/>
+        <exec executable="svn" output="${build.classes}/META-INF/svn.info" os="Linux">
+            <arg line="info" />
+        </exec>
+        <jar destfile="${build.dir}/${final.name}.jar" basedir="${build.classes}"/>
+        <zip destfile="${build.dir}/${final.name}-src.zip">
+            <fileset dir="src" excludes="**/.svn"/>
+        </zip>
+    </target>
+
+    <target name="test" depends="build, build-test"> 
+        <mkdir dir="${test.build.dir}/report" />
+        <mkdir dir="${test.build.dir}/report"/>
+        <antcall target="run_test">
+            <param name="run_test.classpath" value="test.classpath" />
+            <param name="run_test.report" value="${test.build.dir}/report" />
+            <param name="test.stoponfail" value="true" />
+        </antcall>
+    </target>
+
+    <target name="war" depends="jar">
+        <war destfile="${build.dir}/${final.name}.war" webxml="${web.inf}/web.xml">
+            <lib dir="${lib.dir}">
+                <include name="*.jar"/>
+                <include name="*.so"/>
+            </lib>
+            <lib dir="${build.dir}">
+                <include name="${final.name}.jar"/>
+            </lib>
+            <webinf dir="${web.inf}">
+                <include name="*.xml"/>
+                <include name="velocity/*.vm"/>
+            </webinf>
+            <webinf dir="./" includes="conf/*.xml"/>
+            <webinf dir="./" includes="conf/*.dat"/>
+            <webinf dir="./" includes="conf/*.conf"/>
+            <webinf dir="./" includes="conf/*.properties"/>
+            <webinf dir="./" includes="conf/*.arff"/>
+            <webinf dir="./" includes="data/*"/>
+            <webinf dir="./" includes="so/*"/>
+        <fileset dir="${web.src.dir}"/>
+        </war>
+    </target>
+   
+    <target name="run_test">
+        <delete dir="${test.build.data}"/>
+        <mkdir dir="${test.build.data}"/>
+
+        <property name="test.formatter" value="plain"/>  
+
+        <junit printsummary="yes" haltonfailure="no" fork="yes" dir="${basedir}" errorProperty="tests.failed" failureProperty="tests.failed" timeout="120000">
+            <jvmarg value="-server"/>
+            <jvmarg value="-Xmx512m"/>
+            <sysproperty key="test.build.data" value="${test.build.data}"/>
+            <sysproperty key="test.src.dir" value="${test.src.dir}"/>
+            <sysproperty key="IS_TEST" value="true" />
+      
+            <classpath refid="${run_test.classpath}"/>
+            <formatter type="${test.formatter}" />
+
+            <batchtest todir="${run_test.report}" unless="testcase">
+                <fileset dir="${test.src.dir}" includes="**/Test*.java" excludes="odis/cowork/**,odis/mapred/ext/**" />
+            </batchtest>
+
+            <batchtest todir="${run_test.report}" if="testcase">
+                <fileset dir="${test.src.dir}" includes="**/${testcase}.java"/>
+            </batchtest>
+        </junit>
+
+        <fail message="Test failed!">
+            <condition>
+                <and>
+                    <isset property="tests.failed"/>
+                    <isset property="test.stoponfail"/>
+                </and>
+            </condition>
+        </fail>
+    </target>   
+
+    <target name="dist" depends="build, javadoc">
+        <mkdir dir="${dist.dir}" />
+        <jar destfile="${dist.dir}/${project}-${version}.jar">
+            <fileset dir="${build.dir}" id="id" >
+            </fileset>
+        </jar>
+
+        <zip destfile="${dist.dir}/${project}-${version}-src.zip">
+            <zipfileset dir="${src.dir}" prefix="${project}/src" excludes="**/.svn/*" />
+            <zipfileset dir="${lib.dir}" prefix="${project}/lib" excludes="**/.svn" />
+            <zipfileset dir="${javadoc.dir}" prefix="${project}/javadoc" excludes="**/.svn" />
+            <zipfileset file="${dist.dir}/${project}-${version}.jar" prefix="${project}" />
+            <zipfileset file="README.txt" prefix="${project}" />
+        </zip>
+    </target>
+
+    <!-- ================================================================== -->
+    <!-- Documentation                                                      -->
+    <!-- ================================================================== -->
+    <target name="javadoc" depends="build">
+        <mkdir dir="${build.javadoc}"/>
+        <javadoc
+         overview="${src.dir}/overview.html"
+         destdir="${build.javadoc}"
+         author="true"
+         version="true"
+         use="true"
+         windowtitle="${Name} ${version} API"
+         doctitle="${Name} ${version} API"
+        >
+            <packageset dir="${src.dir}"/>
+            <link href="${javadoc.link.java}"/>
+            <link href="${javadoc.link.lucene}"/>
+            <classpath refid="project.classpath"/>
+<!--            <group title="Core" packages="*"/> -->
+            <header>
+                <![CDATA[<meta http-equiv="Content-Type" content="text/html;charset=utf-8">]]>
+            </header>
+            <bottom>
+                        <![CDATA[<i>Copyright &#169; 2005-2006 Netease R&D Confidential. Do not distribute.</i>]]>
+                    </bottom>
+        </javadoc>
+    </target>    
+    <!-- ================================================================================== -->
+    <!-- for fast jar deployment, skip resolve -->
+    <target name="dir-jar" depends="init">
+        <!-- Clean -->
+        <delete dir="${build.dir}"/>
+        <delete file="${final.name}.jar"/>
+
+        <!-- Build Project -->
+        <mkdir dir="${build.classes}"/>
+        <javac
+            encoding="${build.encoding}"
+            srcdir="${src.dir}"
+            includes="**/*.java"
+            destdir="${build.classes}"
+            debug="${debug}"
+            optimize="${optimize}"
+            deprecation="${deprecation}">
+            <classpath refid="project.classpath"/>
+        </javac>
+        <copy todir="${build.classes}">
+            <fileset dir="${src.dir}">
+            <exclude name="**/*.java" />
+            <exclude name="**/*.bak" />
+            <exclude name="**/~*" />
+            <exclude name="**/.svn/**" />
+            </fileset>
+        </copy>
+
+        <!-- Generate jar -->
+        <exec executable="svn" output="${build.classes}/META-INF/svn.info" os="Linux">
+            <arg line="info" />
+        </exec>
+        <jar destfile="${build.dir}/${final.name}.jar" basedir="${build.classes}"/>
+
+    </target>
+
+        
+</project>

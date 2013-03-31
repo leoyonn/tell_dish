@@ -1,0 +1,212 @@
+address,cite,dfn,em,var {
+    font-style:normal
+}
+code,kbd,pre,samp {
+    font-family:courier new,courier,monospace
+}
+small {
+    font-size:12px
+}
+ul,ol {
+    list-style:none
+}
+a {
+    text-decoration:none;
+    outline:0 none
+}
+a:hover {
+    text-decoration:underline
+}
+sup {
+    vertical-align:text-top
+}
+sub {
+    vertical-align:text-bottom
+}
+legend {
+    color:#000
+}
+fieldset,img {
+    border:0
+}
+button,input,select,textarea {
+    font-size:100%
+}
+table {
+    border-collapse:collapse;
+    border-spacing:0
+}
+
+body {
+    word-wrap:break-word;
+    word-break:normal;
+    _margin:0;
+    _padding:0;
+}
+
+a,embed {
+    outline:none
+}
+
+#wrap {
+    position:relative;
+    zoom:1;
+    margin:0px auto;
+    visibility:hidden;
+    margin-top:20px;
+}
+
+#wrap div {
+    position:absolute;
+    left:0;
+    top:0;
+    opacity:1;
+    visibility:hidden;
+    
+}
+
+.active div.mode {
+    -webkit-transition:all .8s ease-in;
+    -moz-transition:all  .8s ease-in-out;
+    -o-transition:all .5s ease-in;
+    transition:all  .5s ease-in;
+    
+}
+
+
+.mode {
+    background:#FFF;
+    border-top:1px solid #dcdcdc;
+    -webkit-transition: opacity .4s ease-in-out;
+    -moz-transition: opacity .4s ease-in-out;
+    -o-transition: opacity .4s ease-in-out
+}
+
+.trym {
+    -webkit-transition:none;
+    -moz-transition:none;
+    -o-transition:none;
+    transition:none
+}
+
+.active .mode {
+     -webkit-transition: all .7s ease-out .1s;
+    -moz-transition:all  .7s ease-out ;
+    -o-transition:all .7s ease-out .1s;
+    transition:all  .7s ease-out .1s
+}
+
+.mode {
+    width:190px;
+    padding:14px 14px 6px;
+    border:1px solid #dfdfdf;
+    background:#FFF
+}
+
+.mode .pic {
+     width:190px;
+    margin-bottom:7px;
+    position:relative;
+    text-align:center
+}
+
+.mode .pic a {
+    display:block
+}
+
+.mode .pic a img {
+    width:190px;
+    vertical-align: bottom;
+    
+}
+
+
+
+.popup_in,.popup_close {
+    animation-duration:.5s;
+    animation-delay:.1s;
+    animation-timing-function:ease-out;
+    animation-fill-mode:both;
+    -webkit-animation-duration:.8s;
+    -webkit-animation-delay:.1s;
+    -webkit-animation-timing-function:ease-out;
+    -webkit-animation-fill-mode:both;
+    -moz-animation-duration:.5s;
+    -moz-animation-delay:.2s;
+    -moz-animation-timing-function:ease-out;
+    -moz-animation-fill-mode:both;
+    -moz-backface-visibility:hidden;
+    -ms-animation-duration:.5s;
+    -ms-animation-delay:.1s;
+    -ms-animation-timing-function:ease-out;
+    -ms-animation-fill-mode:both
+}
+
+.popup_in {
+    -webkit-animation-name:fadeInUp;
+    -moz-animation-name:fadeInUp;
+    -ms-animation-name:fadeInUp;
+    -o-animation-name:fadeInUp;
+    animation-name:fadeInUp
+}
+.popup_close {
+    visibility:hidden
+}
+
+@-webkit-keyframes fadeInUp {
+    0% {
+    margin-top:-25px;
+    
+}
+100% {
+    margin-top:0
+}
+
+}
+@-moz-keyframes fadeInUp {
+    
+}
+@-ms-keyframes fadeInUp {
+    0% {
+    opacity:0;
+    -ms-transform:translateY(-20px)
+}
+100% {
+    opacity:1;
+    -ms-transform:translateY(0)
+}
+
+}
+@-o-keyframes fadeInUp {
+    0% {
+    opacity:0
+}
+100% {
+    opacity:1
+}
+
+}
+@keyframes fadeInUp {
+    0% {
+    opacity:0;
+    transform:translateY(20px)
+}
+100% {
+    opacity:1;
+    transform:translateY(0)
+}
+
+}
+@-webkit-keyframes fadeOutUp {
+    0% {
+    opacity:1;
+    -webkit-transform:translateY(0)
+}
+100% {
+    opacity:0;
+    visibility:hidden;
+    -webkit-transform:translateY(-20px)
+}
+
+}
+

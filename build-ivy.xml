@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    
+<project xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <target name="ivy-resolve" unless="ivy.bypass">
+        <ivy:settings username="${ivy.auth.username}" passwd="${ivy.auth.password}" />
+        <ivy:retrieve pattern="lib/[artifact].[ext]" conf="dev"/>
+    </target>
+
+    <target name="run_publish" depends="clean, jar">
+        <delete file="${build.dir}/ivy.xml"/> <!-- somehow this doesn't get refreshed -->
+        <exec executable="svnversion" outputproperty="svnversion">
+            <arg line="."/>
+        </exec>
+        <echo message="Current code revision is ${svnversion}" />
+        <fail message="Local copy was modified, please commit, update, and try publish again.">
+            <condition>
+                <contains casesensitive="false" string="${svnversion}" substring="M" />
+            </condition>
+        </fail>
+
+        <fail message="Local copy contains mixed versions, svn up and try publish again.">
+            <condition>
+                <contains casesensitive="false" string="${svnversion}" substring=":"/>
+            </condition>
+        </fail>
+
+        <property name="revision" value="${version}.${svnversion}${status_suffix}"/>
+        <ivy:publish resolver="leocode" artifactspattern="${build.dir}/[artifact].[ext]" pubrevision="${revision}"/>
+        <echo message="Module ${module} released with version ${revision}."/>
+<!--
+        <echo message="Please be patient while updating SVNLOG. This may take 1-2 minutes." />
+        <exec executable="svn" output="/global/share/ivy/${organisation}/${module}/SVNLOG">
+             <arg line="log"/>
+        </exec>
+-->
+    </target>
+
+    <target name="publish">
+        <property name="ivy.status" value="integration" />
+        <property name="status_suffix" value=".0" />
+        <antcall target="run_publish" />
+    </target>
+
+    <target name="release">
+        <property name="ivy.status" value="release" />
+        <property name="status_suffix" value="" />
+        <antcall target="run_publish" />
+    </target>
+    
+    <target name="ivydep" depends="ivy-resolve">
+        <mkdir dir="${build.dir}/dep" />
+        <ivy:report todir="${build.dir}/dep" />
+    </target>
+	
+	<target name="findupdate" depends="ivy-resolve">
+	    <ivy:findupdate />
+	</target>
+	
+</project>

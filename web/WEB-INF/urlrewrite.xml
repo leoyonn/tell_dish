@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+ "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
+
+<urlrewrite use-query-string='true'>
+    <rule><from>^/$</from><to>/home?call=home</to></rule>
+    <rule><from>^/index$</from><to>/home?call=home</to></rule>
+    <rule><from>^/home$</from><to>/home?call=home</to></rule>
+    <rule><from>^/up$</from><to>/home?call=uploadImage</to></rule>
+    <rule><from>^/pick/(.+)$</from><to>/home?call=pickImages&amp;$1</to></rule>
+    <rule><from>^/pick$</from><to>/home?call=pickImages</to></rule>
+    <rule><from>^/error/(.+)$</from><to>/error?call=onError&amp;type=$1</to></rule>
+</urlrewrite>
+

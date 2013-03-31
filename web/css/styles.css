@@ -1,0 +1,329 @@
+* {
+	margin:0;
+	padding:0;
+	font-family:"Microsoft YaHei"
+}
+
+html {
+	background:url('/img/background_tile_2.jpg');
+	min-height:100%;
+	position:relative;	
+}
+
+body{
+	color:#fff;
+	min-height:600px;
+	text-align:center;
+}
+
+a, a:visited {
+	text-decoration:none;
+	outline:none;
+	color:#54a6de;
+}
+
+a:hover{
+	text-decoration:underline;
+}
+
+header, footer{
+	display:block;
+}
+
+header {
+	background:url('/img/background_tile_1.jpg');
+	padding:2px;
+	position: relative;
+}
+
+header:before,
+#dropbox:before{
+	display: block;
+	content:'';
+	height:4px;
+	width:100%;
+	background:url('/img/blue_line.jpg');
+	position: absolute;
+	top:0;
+	left:0;
+	box-shadow:0 2px 2px rgba(0,0,0,0.4);
+}
+
+
+h1 {
+	background:url('/img/logo.png') no-repeat top center;
+	height:256px;
+	overflow: hidden;
+	text-indent: -9999px;
+	text-align: center;
+}
+
+._404 {
+    -webkit-border-radius: 60px;
+    -moz-border-radius: 60px;
+	text-align: center;
+	font-size: 40px;
+	width:600px;
+	overflow: hidden;
+}
+
+
+/*-------------------------
+	Dropbox Element
+--------------------------*/
+#dropbox{
+	background:url('/img/background_tile_3.jpg');
+	border-radius:3px;
+	position: relative;
+	margin:10px auto 60px;
+	min-height: 290px;
+	overflow: hidden;
+	padding-bottom: 40px;
+    width: 990px;
+	box-shadow:0 0 4px rgba(0,0,0,0.3) inset,0 -3px 2px rgba(0,0,0,0.1);
+}
+
+
+#dropbox .message {
+	font-size: 11px;
+    text-align: center;
+    padding-top:10px;
+    display: block;
+}
+
+#dropbox .message i{
+	color:#ccc;
+	font-size:10px;
+}
+
+#dropbox:before{
+	border-radius:3px 3px 0 0;
+}
+
+
+
+/*-------------------------
+	Image Previews
+--------------------------*/
+#dropbox .preview {
+	width:245px;
+	height: 280px;
+	float:left;
+	margin: 30px 0 0 60px;
+	position: relative;
+	text-align: center;
+}
+
+#dropbox .preview img {
+	max-width: 240px;
+	max-height:180px;
+	border:3px solid #fff;
+	display: block;
+	box-shadow:0 0 2px #000;
+}
+
+#dropbox .imageHolder{
+	display: inline-block;
+	position:relative;
+}
+
+#dropbox .uploaded{
+	position: absolute;
+	top:0;
+	left:0;
+	height:100%;
+	width:100%;
+	background: url('/img/done.png') no-repeat center center rgba(255,255,255,0.5);
+	display: none;
+}
+
+#dropbox .preview.done .uploaded{
+	display: block;
+}
+
+
+
+/*-------------------------
+	Progress Bars
+--------------------------*/
+
+
+
+#dropbox .progressHolder {
+	position: relative;
+	background-color:#242e36;
+	height:20px;
+	width:100%;
+	left:0;
+    padding:6px auto;
+	
+	box-shadow:0 0 2px #000;
+}
+
+#dropbox .progress {
+	background-color:#2586d0;
+	position: absolute;
+	height:100%;
+	left:0;
+	width:0;
+	box-shadow: 0 0 1px rgba(255, 255, 255, 0.4) inset;
+	-moz-transition:0.25s;
+	-webkit-transition:0.25s;
+	-o-transition:0.25s;
+	transition:0.25s;
+}
+
+#dropbox .preview.done .progress{
+	width:100% !important;
+}
+
+#dropbox .resultHolder {
+	position: relative;
+	background-color:#252f38;
+	height:100px;
+	width:100%;
+	left:0;
+    padding-top:4px;
+    overflow: auto;
+	box-shadow:0 0 2px #000;
+}
+
+#dropbox .result {
+	font-size: 12px;
+    text-align: left;
+    padding-top:1px;
+    padding-left:6px;
+    display: block;
+    overflow: auto;
+}
+
+
+/*----------------------------
+	The Footer
+-----------------------------*/
+footer{
+	display:block;
+	background-color: #151517;
+    
+    position:fixed;
+	width:100%;
+	height:40px;
+	bottom:0;
+	left:0;
+	z-index: 100000;
+	
+	box-shadow: 0 -1px 2px #171717;
+	-webkit-box-shadow: 0 -1px 2px #171717;
+	-moz-box-shadow: 0 -1px 2px #171717;
+}
+
+footer h2{
+	font-size:14px;
+	font-weight:normal;
+	left:50%;
+	margin-left:-400px;
+	padding:10px 0;
+	position:absolute;
+	width: 540px;
+	color:#eee;
+}
+
+footer a.footlogo,a.footlogo:visited{
+	background:url("/img/logo.png") no-repeat right top;
+	border:none;
+	text-decoration:none;
+	color:#FCFCFC;
+	font-size:12px;
+	height:40px;
+	left:50%;
+	line-height:31px;
+	margin:23px 0 0 110px;
+	position:absolute;
+	top:0;
+	width:290px;
+}
+
+.btn {
+    background: #222 url(/img/alert-overlay.png) repeat-x;
+    display: inline-block;
+    padding: 5px 10px 6px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    line-height: 1;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-box-shadow: 0 1px 3px #999;
+    -webkit-box-shadow: 0 1px 3px #999;
+    text-shadow: 0 -1px 1px #222;
+    border-bottom: 1px solid #222;
+    position: relative;
+    cursor: pointer;
+    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+}
+
+a.btn_addPic {
+    text-decoration:none;
+}
+  
+.btn_addPic {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-box-shadow: 0 1px 3px #999;
+    -webkit-box-shadow: 0 1px 3px #999;
+    position: relative;
+    display: inline-block;
+    width: 270px;
+    height: 39px;
+    overflow: hidden;
+    border: 1px solid #EBEBEB;
+    background: none repeat scroll 0 0 #F3F3F3;
+    color: #999999;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn_addPic span {
+    display: block;
+    line-height: 39px;
+}
+
+.btn_addPic em {
+    background:url(/img/add.png) 0 0;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    overflow: hidden;
+    margin: 10px 5px 10px 0;
+    line-height: 40px;
+    vertical-align: middle;
+}
+
+.btn_addPic:hover em {
+    background-position:-19px 0;
+}
+
+.filePrew {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 270px;
+    height: 39px;
+    font-size: 40px; /* 增大不同浏览器的可点击区域 */
+    opacity: 0; /* 实现的关键点 */
+    filter:alpha(opacity=0);/* 兼容IE */
+}
+
+ #errmsg {
+	font-size: 20px;
+	color: red;
+    text-align: center;
+    padding:10px;
+    display: block;
+}
+
+

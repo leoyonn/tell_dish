@@ -1,0 +1,18 @@
+
+<footer>
+    <h2>饭饭的厨师长：sanji!</h2>
+    <a class="footlogo" href="http://sanji.leoyonn.com"></a>
+</footer>
+
+<!-- Including The jQuery Library -->
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+
+<!-- Including the HTML5 Uploader plugin -->
+<script src="/js/jquery.filedrop.js"></script>
+
+<!-- The main script file -->
+<script src="/js/script.js"></script>
+<script src="/js/upfile.js"></script>
+<script src="/js/delimage.js"></script>
+<script src="/js/falls.js"></script>
+

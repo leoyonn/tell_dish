@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+    <property name="resourceLoaderPath" value="/WEB-INF/vm/"/>
+    <property name="velocityPropertiesMap">
+        <props>
+            <prop key="input.encoding">utf-8</prop>
+            <prop key="output.encoding">utf-8</prop>    
+     </props>
+    </property>
+    </bean>
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+        <property name="cache" value="true"/>
+        <property name="prefix" value=""/>
+        <property name="suffix" value=".vm"/>
+        <property name="contentType"><value>text/html; charset=utf-8</value></property>
+    </bean>
+    
+    <bean id="nameResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+        <property name="paramName" value="call"/>
+    </bean>
+
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/api">HomeCtrl</prop>
+                <prop key="/index">HomeCtrl</prop>
+                <prop key="/home">HomeCtrl</prop>
+                <prop key="/error">ErrorCtrl</prop>
+            </props>
+        </property>
+    </bean>
+    
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    	<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+
+    <bean id="HomeCtrl" class="sanji.web.HomeCtrl" singleton="true">
+        <property name="methodNameResolver">
+            <ref bean="nameResolver"/>
+        </property>
+    </bean>
+
+    <bean id="ErrorCtrl" class="sanji.web.ErrorCtrl" singleton="true">
+        <property name="methodNameResolver">
+            <ref bean="nameResolver"/>
+        </property>
+    </bean>
+
+</beans>        

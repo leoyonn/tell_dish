@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="def-proj" default="build">
+    
+    <import file="build-core.xml"/>
+    <import file="build-ivy.xml"/>
+    <import file="build-web.xml"/>
+    
+    <!-- guojing add start -->    
+    <property name="coverage.dir" value="coverage" />
+    <property name="reports.dir" value="reports" />
+    <property name="reports.coverage.dir" value="${reports.dir}/coverage" />
+    <property name="out.instr.dir" value="outinstr" />
+    <property name="reports.junit.dir" value="${reports.dir}/junit"/>
+    <property name="findbugs.home" value="/global/sww/java/findbugs-1.3.9"/>
+    <property name="reports.findbugs.dir" value="${reports.dir}/findbugs"/>
+    <property name="reports.checkstyle.dir" value="${reports.dir}/checkstyle"/>
+
+    <target name="findbugs" >
+        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="project.classpath"/>
+        <mkdir dir="${reports.findbugs.dir}" />
+        <findbugs home="${findbugs.home}"
+            output="xml"
+            outputFile="${reports.findbugs.dir}/sanji-fb.xml"
+            excludeFilter="findbugsfilter.xml">
+            <sourcePath path="${src.dir}" />
+            <class location="${build.classes}" />
+        </findbugs>
+    </target>
+
+    <target name="checkstyle" >
+        <taskdef resource="checkstyletask.properties" classpathref="project.classpath"/>
+        <mkdir dir="${reports.checkstyle.dir}" />
+        <checkstyle config="x-style.xml">
+            <fileset dir="${src.dir}" includes="**/*.java"/>
+            <formatter type="plain"/>
+            <formatter type="xml" toFile="${reports.checkstyle.dir}/checkstyle_errors.xml"/>
+        </checkstyle>
+    </target>
+
+    <target name="emma" description="turns on EMMA's instrumentation/reporting" >
+        <property name="emma.enabled" value="true" />
+        <mkdir dir="${out.instr.dir}" />
+        <mkdir dir="${coverage.dir}" />
+        <delete dir="${test.build.data}"/>
+        <mkdir dir="${test.build.data}"/>
+        <property name="emma.filter" value="-*Test*" />
+    </target>
+
+    <target name="jenkins-emma" depends="clean,clean-jenkins,build, build-test, emma" description="runs the unittest" >
+        <taskdef resource="emma_ant.properties" classpathref="project.classpath" />
+        <mkdir dir="${reports.coverage.dir}" />
+        <mkdir dir="${reports.junit.dir}" />
+        <emma enabled="${emma.enabled}" >
+            <instr instrpath="${build.classes}" destdir="${out.instr.dir}" metadatafile="${coverage.dir}/metadata.emma" merge="true" >
+                <filter value="${emma.filter}" />
+            </instr>
+        </emma>
+        <junit printsummary="yes" haltonfailure="no" fork="yes" dir="${basedir}" 
+                errorProperty="tests.failed" failureProperty="tests.failed" timeout="300000" maxmemory="1024m">
+            <classpath>
+                <pathelement location="${out.instr.dir}" />
+                <pathelement location="${build.classes}" />
+                <path refid="project.classpath" />
+            </classpath> 
+            <jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />
+            <jvmarg value="-Demma.coverage.out.merge=true" />
+            <jvmarg value="-server"/>
+            <jvmarg value="-Xmx512m"/>
+            <sysproperty key="test.build.data" value="${test.build.data}"/>
+            <sysproperty key="test.src.dir" value="${test.src.dir}"/>
+            <sysproperty key="IS_TEST" value="true" />
+            <classpath refid="test.classpath"/>
+            <formatter type="xml" />
+    
+            <batchtest todir="${reports.junit.dir}"  unless="testcase">
+                <fileset dir="${test.src.dir}" includes="**/Test*.java" 
+                         excludes="odis/cowork/**,odis/mapred/ext/**" />
+            </batchtest>
+    
+            <batchtest todir="${reports.junit.dir}"  if="testcase">
+                     <fileset dir="${test.src.dir}" includes="**/${testcase}.java"/>
+           </batchtest>
+        </junit>
+        
+        <!-- if enabled, generate coverage report(s): -->
+        <emma enabled="${emma.enabled}" >
+            <report sourcepath="${src.dir}" sort="+block,+name,+method,+class" metrics="method:70,block:80,line:80,class:100" >
+                <fileset dir="${coverage.dir}" >
+                     <include name="*.emma" />
+                </fileset>
+                <xml outfile="${reports.coverage.dir}/coverage.xml" depth="package" />
+                <html outfile="${reports.coverage.dir}/coverage.html" depth="method" columns="name,class,method,block,line" encoding="UTF-8" />
+            </report>
+        </emma>
+    </target>
+    <target name="clean-jenkins">
+        <delete dir="${out.instr.dir}"/>
+        <delete dir="${coverage.dir}"/>
+        <delete dir="${reports.dir}"/>
+    </target>
+     <!-- guojing add end -->
+    
+    <!-- Ivy resolveing (and unzipping) -->
+    <target name="resolve" depends="ivy-resolve">
+      <!-- uncomment this block to extract word-segment libraries
+        <delete dir="${lib.dir}/wordsegment" />
+        <unzip src="${lib.dir}/wordsegment-lib.zip" dest="${lib.dir}/" />
+      -->
+
+      <!-- umcomment this block to extract odis scripts (to bin folder)
+        <unzip src="${lib.dir}/odis-cmd.zip" dest="${bin.dir}/" />
+        <chmod perm="ugo+x">
+            <fileset dir="${bin.dir}" />
+        </chmod>
+      -->
+    </target>
+
+    <target name="install" depends="jar">
+        <fail unless="install.dir"
+            message="Cannot find property install.dir. Please set." />
+        <mkdir dir="${install.dir}" />
+        <mkdir dir="${install.dir}/conf" />
+        <copy todir="${install.dir}/conf">
+            <fileset dir="${basedir}/conf">
+                <exclude name="**/*.template" />
+                <exclude name="**/*.dtd" />
+                <exclude name="**/*.xsl" />
+            </fileset>
+        </copy>
+        <mkdir dir="${install.dir}/bin" />
+        <copy todir="${install.dir}/bin">
+            <fileset dir="${basedir}/bin" />
+        </copy>
+        <chmod perm="ugo+x">
+            <fileset dir="${install.dir}/bin" />
+        </chmod> 
+
+        <mkdir dir="${install.dir}/lib" />
+        <copy todir="${install.dir}/lib">
+            <fileset dir="${basedir}/lib">
+                <exclude name="*-src.zip" />
+                <exclude name="*-src.jar" />
+                <exclude name="*.src.zip" />
+                <exclude name="*.src.jar" />
+            </fileset>
+        </copy>
+        <copy overwrite="true"  todir="${install.dir}/lib"
+            file="${build.dir}/${final.name}.jar" />
+    </target>
+
+
+    <!-- Clean built files. -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete file="${final.name}.jar"/>
+        <delete includeemptydirs="true">
+            <fileset dir="${lib.dir}" includes="**/*" excludes="**/.svn/*" />
+        </delete>
+    </target>    
+
+    <target name="crawler">
+        <java classname="${build.dir}/test/classes/sanji/crawler/TestCrawler">
+        </java>
+    </target>
+    
+    <target name="deploy-javadoc" depends="javadoc">
+        <zip destfile="${build.dir}/${name}-${version}-javadoc.zip">
+            <zipfileset dir="${javadoc.dir}" excludes="**/.svn" />
+        </zip>
+        <delete dir="${resin.home.dir}/webapps/docs" />
+        <unzip src="${build.dir}/${name}-${version}-javadoc.zip" dest="${resin.home.dir}/webapps/docs" overwrite="true"/>
+    </target>
+
+</project>

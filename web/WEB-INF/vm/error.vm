@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    #parse("module/head.vm") 
+    <body>
+		<header>
+			<h1>啊喲...</h1>
+		</header>
+		
+		<span class="_404">404...您走错了...出门左转吧...<br/></span>
+		<img class="_404" src="/img/404.jpg"/>
+		
+        #parse("module/foot.vm") 
+    
+    </body>
+</html>
+

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    #parse("module/head.vm") 
+    <body>
+        <header>
+            <h1>上传菜品照片</h1>
+        </header>
+        <div><span id="errmsg">$!{error}</span></div>
+        <div>
+            <span>
+                #foreach ($dish in $!{dishes})
+                    <a href="javascript:select_dish('$!{dish}');">$!{dish}</a>
+                #end
+            </span>
+            <div id="wrap" class="wrap">
+            </div>
+        </div>
+        #parse("module/foot.vm")
+    </body>
+</html>
+

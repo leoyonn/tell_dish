@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    #parse("module/head.vm") 
+    <body>
+        <header>
+            <h1>上传菜品照片</h1>
+        </header>
+        <div><span id="errmsg">$!{error}</span></div>
+        <div>
+            <a class="btn_addPic" href="javascript:void(0);">
+                <span><em>+</em>点击上传菜品图片(可输入网址)</span>
+                <input class="filePrew" tabindex="3" type="file" name="imageFile" id="imageFile" size="3" onchange="up(this)">
+            </a>
+        </div>
+        <div id="dropbox">
+            <span class="message">或直接拖动菜品图片扔在此处<br/></span>
+        </div>
+        #parse("module/foot.vm")
+    </body>
+</html>
+
